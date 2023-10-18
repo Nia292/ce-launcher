@@ -77,8 +77,15 @@ namespace CeLauncher
             var button = (Button)sender;
             button.IsEnabled = false;
             button.Content = "Updating...";
-            await new ModListUpdater(_server.Mods).Update();
-            Connect();
+            var result = await new ModListUpdater(_server.Mods).Update();
+            if (result)
+            {
+                Connect();
+            }
+            else
+            {
+                MessageBox.Show("SteamCMD failed to update the modlist. Please run again.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
+            }
             button.IsEnabled = true;
             button.Content = "Update and Launch";
         }
@@ -87,22 +94,30 @@ namespace CeLauncher
         {
             if (_server != null)
             {
+                var modListBuilder = new ServerModListBuilder(_server.Mods);
                 Log.Info("connecting to server " + _server.Name);
                 var steamExe = FindSteamExecutable();
                 Log.Info("Found steam " + steamExe);
-                new ServerModListBuilder(_server.Mods).BuildServerModList();
-                Log.Info("Built servermodlist.txt");
-                if (_server.HasPassword)
+                if (modListBuilder.AnyModsMissing())
                 {
-                    Process.Start(steamExe,
-                        $"-applaunch 440900 +connect {_server.Host}:{_server.QueryPort}"); 
+                    MessageBox.Show("A mod from your servers modlist is missing. Please launch via Update and Launch", "Launch Failed", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.Yes);
                 }
                 else
                 {
-                    Process.Start(steamExe,
-                        $"-applaunch 440900 +connect {_server.Host}:{_server.QueryPort}");
+                    modListBuilder.BuildServerModList();
+                    Log.Info("Built servermodlist.txt");
+                    if (_server.HasPassword)
+                    {
+                        Process.Start(steamExe,
+                            $"-applaunch 440900 +connect {_server.Host}:{_server.QueryPort}"); 
+                    }
+                    else
+                    {
+                        Process.Start(steamExe,
+                            $"-applaunch 440900 +connect {_server.Host}:{_server.QueryPort}");
+                    }
+                    Log.Info("Launched Game!");
                 }
-                Log.Info("Launched Game!");
             }
         }
 

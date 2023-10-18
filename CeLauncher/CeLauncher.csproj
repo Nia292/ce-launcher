@@ -5,12 +5,17 @@
         <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
+        <ApplicationIcon>Image\icon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
       <None Remove="Image\hunted.png" />
       <Resource Include="Image\hunted.png" />
       <None Remove="Conf\log4net.config" />
+      <None Remove="Image\icon.ico" />
+      <Resource Include="Image\icon.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Resource>
     </ItemGroup>
 
     <ItemGroup>

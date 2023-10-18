@@ -1,40 +1,48 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using log4net;
+using log4net.Repository.Hierarchy;
 
 namespace CeLauncher.Support;
 
 public class ModListUpdater
 {
     private readonly string[] _modIds;
+    private static readonly ILog Log = LogManager.GetLogger(typeof(ModListUpdater));
 
     public ModListUpdater(string[] modIds)
     {
         _modIds = modIds;
+        if (!Directory.Exists(SteamCmdDirPath()))
+        {
+            Directory.CreateDirectory(SteamCmdDirPath());
+        }
     }
 
-    public async Task Update()
+    public async Task<bool> Update()
     {
         await DownloadSteamCmdIfNeeded();
         Trace.WriteLine("steamcmd is up to date, updating mods");
-        await UpdateMods();
+        return await UpdateMods();
     }
     
     private async Task DownloadSteamCmdIfNeeded()
     {
-        if (!File.Exists("./steamcmd.exe"))
+        if (!File.Exists($"{SteamCmdDirPath()}/steamcmd.exe"))
         {
             using var client = new HttpClient();
             // Download the Web resource and save it into the current filesystem folder.
             var response = await client.GetByteArrayAsync("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip");
-            await File.WriteAllBytesAsync("./steamcmd.zip", response);
-            System.IO.Compression.ZipFile.ExtractToDirectory("./steamcmd.zip", "./");
+            await File.WriteAllBytesAsync($"{SteamCmdDirPath()}\\steamcmd.zip", response);
+            System.IO.Compression.ZipFile.ExtractToDirectory($"{SteamCmdDirPath()}\\steamcmd.zip", SteamCmdDirPath());
         }
     }
 
-    private async Task UpdateMods()
+    private async Task<bool> UpdateMods()
     {
         var steamLibraryDir = CeLauncherUtils.FindSteamLibraryWithConan();
         Trace.WriteLine($"Workshop directory is {steamLibraryDir}");
@@ -43,6 +51,18 @@ public class ModListUpdater
             .Select(modId => $"+workshop_download_item 440900 {modId} validate");
         var updateStatement = string.Join(" ", updateStatements);
         var command = $"+force_install_dir \"{steamLibraryDir}\" +login anonymous {updateStatement} +quit";
-        await CeLauncherUtils.RunProcessAsync("./steamcmd.exe", command);
+        var result = await CeLauncherUtils.RunProcessAsync($"{SteamCmdDirPath()}\\steamcmd.exe", command);
+        if (result != 0)
+        {
+            Log.Info("Failed to update: " + result);
+            return false;
+        }
+
+        return true;
+    }
+
+    private string SteamCmdDirPath()
+    {
+        return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\ce-launcher\\steam-cmd";
     }
 }

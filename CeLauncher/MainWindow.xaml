@@ -9,6 +9,7 @@
         ResizeMode="NoResize" 
         AllowsTransparency="True"
         Background="#292829" MouseDown="Window_OnMouseDown"
+        Icon="Image/icon.ico"
         Title="CE Launcher" Height="500" Width="854">
     <Grid Margin="10">
         <Grid.RowDefinitions>
