@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -124,23 +125,32 @@ namespace CeLauncher
 
         private async Task LoadServerList()
         {
-            Log.Info("Loading server list from GH");
+            Log.Info("Loading server list");
             SetLoadingServers(true);
-            using var client = new HttpClient();
-            // Download the Web resource and save it into the current filesystem folder.
-            var response = await client.GetStringAsync("https://raw.githubusercontent.com/Nia292/ce-server-list/main/servers.json");
-            var servers = JsonNet.Deserialize<ConnectableServer[]>(response);
-            _availableServers = servers;
-            SetLoadingServers(false);
-            SetSelectedServer(servers[0]);
-            CbxServerList.Items.Clear();
-            foreach (var connectableServer in servers)
+            if (File.Exists("./servers.json"))
             {
-                CbxServerList.Items.Add(connectableServer.Name);
+                _availableServers = _availableServers.Concat(LoadServerListFromFile()).ToArray();
             }
+            var serversFromGithub = await LoadServerListFromGithub();
+            _availableServers = _availableServers.Concat(serversFromGithub).ToArray();
+            SetSelectedServer(_availableServers[0]);
+            RebuildServerList();
+            SetLoadingServers(false);
+            Log.Info("Loaded server list");
+        }
 
-            CbxServerList.SelectedItem = _server.Name;
-            Log.Info("Loaded server list from GH");
+        private async Task<ConnectableServer[]> LoadServerListFromGithub()
+        {
+           
+            using var client = new HttpClient();
+            var response = await client.GetStringAsync("https://raw.githubusercontent.com/Nia292/ce-server-list/main/servers.json");
+            return JsonNet.Deserialize<ConnectableServer[]>(response);
+        }
+        
+        private ConnectableServer[] LoadServerListFromFile()
+        {
+            var json = File.ReadAllText("./servers.json");
+            return JsonNet.Deserialize<ConnectableServer[]>(json);
         }
 
         private void SetSelectedServer(ConnectableServer server)
@@ -149,6 +159,7 @@ namespace CeLauncher
             BtnLaunch.IsEnabled = true;
             BtnUpdateLaunch.IsEnabled = true;
             BtnLaunch.Content = "Launch " + _server.Name;
+            CbxServerList.SelectedItem = _server.Name;
         }
 
         private void SetLoadingServers(bool loading)
@@ -174,6 +185,15 @@ namespace CeLauncher
             {
                 var server = _availableServers.First(server => server.Name == (string)selectedItem);
                 SetSelectedServer(server);
+            }
+        }
+
+        private void RebuildServerList()
+        {
+            CbxServerList.Items.Clear();
+            foreach (var connectableServer in _availableServers)
+            {
+                CbxServerList.Items.Add(connectableServer.Name);
             }
         }
     }
