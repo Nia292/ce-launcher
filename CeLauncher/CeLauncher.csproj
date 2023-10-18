@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Image\hunted.png" />
+      <Resource Include="Image\hunted.png" />
+      <None Remove="Conf\log4net.config" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Json.Net" Version="1.0.33" />
+      <PackageReference Include="log4net" Version="2.0.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="log4net.config" />
+      <Content Include="log4net.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

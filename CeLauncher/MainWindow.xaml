@@ -1,0 +1,41 @@
+﻿<Window x:Class="CeLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CeLauncher"
+        mc:Ignorable="d"
+        WindowStyle = "None"
+        ResizeMode="NoResize" 
+        AllowsTransparency="True"
+        Background="#292829" MouseDown="Window_OnMouseDown"
+        Title="CE Launcher" Height="500" Width="854">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="363" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" >
+            <Label x:Name="LblTitle" Foreground="#cec7af" FontSize="32px">CE Server Launcher</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1" Margin="0,5,5,0" >
+            <ComboBox x:Name="CbxServerList" SelectionChanged="CbxServerList_OnSelectionChanged">
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="3" Margin="0,0,5,0">
+            <Button Background="#cec7af" x:Name="BtnLaunch" Margin="0,5,0,0" Click="BtnLaunch_OnClick">Launch </Button>
+            <Button Background="#cec7af" x:Name="BtnUpdateLaunch" Margin="0,5,0,0" Click="BtnUpdateLaunch_OnClick">Update and Launch</Button>
+            <Button Background="#cec7af" x:Name="BtnClose" Margin="0,5,0,0" Click="BtnClose_OnClick">Close</Button>
+        </StackPanel>
+      
+        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="4" Stretch="Uniform" Source="/Image/hunted.png" />
+    </Grid>
+</Window>
