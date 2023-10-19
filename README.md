@@ -1,5 +1,9 @@
+![launcher.png](launcher.png)
 # Conan Exiles Launcher
 Just a launcher for Conan Exiles that patches your modlist for you. Has the feature to connect to a server and, optionally, update all your mods before it does. 
+
+# Requirements
+Currently only works on 64bit Windows. If you need a 32bit version let me know. Not sure if I can support Linux natively.
 
 # Installation
 Head over to the releases tab. Download the latest version.
