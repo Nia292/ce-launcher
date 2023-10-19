@@ -2,6 +2,11 @@
 # Conan Exiles Launcher
 Just a launcher for Conan Exiles that patches your modlist for you. Has the feature to connect to a server and, optionally, update all your mods before it does. 
 
+Features Include:
+- Connecting to a public server from the [ce-servers-list](https://github.com/Nia292/ce-server-list/blob/main/servers.json)
+- Connecting to a private server via supplied config 
+- Updating your modlist without the steam validation/re-sub hassle
+
 # Requirements
 Currently only works on 64bit Windows. If you need a 32bit version let me know. Not sure if I can support Linux natively.
 
@@ -36,4 +41,11 @@ The servers.json shoudl look like this:
 ```
 Where you obviously have to set name, host, query port and the modlist. If you have issues with this, feel free to reach out.
 
+# Future Plans
+
+Right now, this is just a drop-in replacement for the funcom launcher. It only provides marginally more features, like server selection and
+hassle-free modlist management.
+
+I initially intended this to be a replacement for steam workshop, providing servers with a means to directly supply mods to their
+userbase through nexusmods/gdrive/etc. Right now, I'd like to test this a bit further, see how it works and if there is interest!
 

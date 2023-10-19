@@ -42,21 +42,59 @@ public class ModListUpdater
 
     private async Task<bool> UpdateMods()
     {
+        if (_modIds.Length <= 0)
+        {
+            return true;
+        }
         var steamLibraryDir = CeLauncherUtils.FindSteamLibraryWithConan();
         Trace.WriteLine($"Workshop directory is {steamLibraryDir}");
-        var updateStatements = _modIds
-            .Where(modId => modId != "2886779102")
-            .Select(modId => $"+workshop_download_item 440900 {modId} validate");
-        var updateStatement = string.Join(" ", updateStatements);
-        var command = $"+force_install_dir \"{steamLibraryDir}\" +login anonymous {updateStatement} +quit";
-        var result = await CeLauncherUtils.RunProcessAsync($"{SteamCmdDirPath()}\\steamcmd.exe", command);
-        if (result != 0)
+        var resultFirst = await UpdateFirstMod(steamLibraryDir);
+        if (resultFirst != 0)
         {
-            Log.Info("Failed to update: " + result);
+            Log.Info("Failed to update: " + resultFirst);
+            return false;
+        }
+        var resultBatch = await UpdateModlist(steamLibraryDir);
+        if (resultBatch != 0)
+        {
+            Log.Info("Failed to update: " + resultBatch);
             return false;
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// SteanCMD seems to randomly stall when doing a batch up. To bypass that, we do a little warmup round with just the first mod
+    /// to then update all the mods after
+    /// </summary>
+    /// <param name="steamLibraryDir"></param>
+    private async Task<int> UpdateFirstMod(string steamLibraryDir)
+    {
+        var commandFirst = $"+force_install_dir \"{steamLibraryDir}\" +login anonymous +workshop_download_item 440900 {_modIds[0]} validate +quit";
+        return await CeLauncherUtils.RunProcessAsync($"{SteamCmdDirPath()}\\steamcmd.exe", commandFirst);
+    }
+    
+    /// <summary>
+    /// SteanCMD seems to randomly stall when doing a batch up. To bypass that, we do a little warmup round with just the first mod
+    /// to then update all the mods after
+    /// </summary>
+    /// <param name="steamLibraryDir"></param>
+    private async Task<int> UpdateModlist(string steamLibraryDir)
+    {
+        var updateStatements = BuildUpdateStatements();
+        var command = $"+force_install_dir \"{steamLibraryDir}\" +login anonymous {updateStatements} +quit";
+        return await CeLauncherUtils.RunProcessAsync($"{SteamCmdDirPath()}\\steamcmd.exe", command);
+    }
+
+    
+    private string BuildUpdateStatements()
+    {
+        var statements = _modIds
+            // Bypass tot! custom for now
+            .Where(modId => modId != "2886779102")
+            .Select(modId => $"+workshop_download_item 440900 {modId} validate");
+        return string.Join(" ", statements);
     }
 
     private string SteamCmdDirPath()
