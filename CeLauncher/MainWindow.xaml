@@ -27,9 +27,11 @@
         <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0" >
             <Label x:Name="LblTitle" Foreground="#cec7af" FontSize="32px">CE Server Launcher</Label>
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1" Margin="0,5,5,0" >
-            <ComboBox x:Name="CbxServerList" SelectionChanged="CbxServerList_OnSelectionChanged">
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,5,5,0" >
+            <ComboBox x:Name="CbxServerList" SelectionChanged="CbxServerList_OnSelectionChanged" Background="#cec7af" BorderBrush="#cec7af">
             </ComboBox>
+            <Label x:Name="LblServerPassword" Foreground="#cec7af">Server Password:</Label>
+            <PasswordBox Margin="0,3,0,0" Name="PasswordBox" Background="#cec7af"/>  
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="3" Margin="0,0,5,0">
             <Button Background="#cec7af" x:Name="BtnLaunch" Margin="0,5,0,0" Click="BtnLaunch_OnClick">Launch </Button>

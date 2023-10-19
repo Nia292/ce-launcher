@@ -109,8 +109,9 @@ namespace CeLauncher
                     Log.Info("Built servermodlist.txt");
                     if (_server.HasPassword)
                     {
+                        var password = PasswordBox.Password;
                         Process.Start(steamExe,
-                            $"-applaunch 440900 +connect {_server.Host}:{_server.QueryPort}"); 
+                            $"-applaunch 440900 +connect {_server.Host}:{_server.QueryPort} +password {password}"); 
                     }
                     else
                     {
@@ -160,6 +161,18 @@ namespace CeLauncher
             BtnUpdateLaunch.IsEnabled = true;
             BtnLaunch.Content = "Launch " + _server.Name;
             CbxServerList.SelectedItem = _server.Name;
+            if (server.HasPassword)
+            {
+                LblServerPassword.Visibility = Visibility.Visible;
+                PasswordBox.Visibility = Visibility.Visible;
+                PasswordBox.Password = "";
+            }
+            else
+            {
+                LblServerPassword.Visibility = Visibility.Hidden;
+                PasswordBox.Visibility = Visibility.Hidden;
+                PasswordBox.Password = "";
+            }
         }
 
         private void SetLoadingServers(bool loading)
