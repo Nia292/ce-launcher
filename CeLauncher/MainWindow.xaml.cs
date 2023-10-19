@@ -23,9 +23,11 @@ namespace CeLauncher
         private ConnectableServer? _server;
         private ConnectableServer[] _availableServers = {};
         private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindow));
+        private readonly Config _config;
         
         public MainWindow()
         {
+            _config = Config.InitFromConfig();
             InitializeComponent();
             LoadServerList();
         }
@@ -134,7 +136,8 @@ namespace CeLauncher
             }
             var serversFromGithub = await LoadServerListFromGithub();
             _availableServers = _availableServers.Concat(serversFromGithub).ToArray();
-            SetSelectedServer(_availableServers[0]);
+            var selectedServer = _availableServers.FirstOrDefault(server => _config.LastServer == server.Name, _availableServers[0]);
+            SetSelectedServer(selectedServer);
             RebuildServerList();
             SetLoadingServers(false);
             Log.Info("Loaded server list");
@@ -173,6 +176,9 @@ namespace CeLauncher
                 PasswordBox.Visibility = Visibility.Hidden;
                 PasswordBox.Password = "";
             }
+
+            _config.LastServer = server.Name;
+            _config.Persist();
         }
 
         private void SetLoadingServers(bool loading)

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using log4net;
-using log4net.Repository.Hierarchy;
 
 namespace CeLauncher.Support;
 
@@ -63,6 +61,6 @@ public class ModListUpdater
 
     private string SteamCmdDirPath()
     {
-        return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\ce-launcher\\steam-cmd";
+        return "./steam-cmd";
     }
 }
