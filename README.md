@@ -6,6 +6,10 @@ Head over to the releases tab. Download the latest version.
 
 You may be prompted to download and install a .NET desktop runtime. Follow the steps instructed when it happens. 
 
+# Updating Mods
+You can force-update the mods for the server you have currently selected by hitting "Update and Launch". This will download steamcmd for you and then update each mod in the servers modlist.
+**Sometimes, on the first run,  it will hang on the first mod in the modlist for no reason whatsoever. If you see your download being stuck in the console window that pops up, close it and hit Update and Launch again.**
+
 # My server isn't listed
 The launcher pulls servers from here: https://github.com/Nia292/ce-server-list/blob/main/servers.json
 
